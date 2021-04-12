@@ -16,13 +16,13 @@ maintainers:
 - name: Datadog
   email: support@datadoghq.com
 dependencies:
-  - name: datadog-crds
-    version: "=0.1.1"
-    repository: https://helm.datadoghq.com
-    condition: clusterAgent.metricsProvider.useDatadogMetrics
-    tags:
-    - install-crds
-  - name: kube-state-metrics
-    version: "=2.13.0"
-    repository: https://kubernetes.github.io/kube-state-metrics
-    condition: datadog.kubeStateMetricsEnabled
+- name: datadog-crds
+  version: "=0.1.1"
+  repository: https://helm.datadoghq.com
+  condition: clusterAgent.metricsProvider.useDatadogMetrics
+  tags:
+  - install-crds
+- name: kube-state-metrics
+  version: "=2.13.0"
+  repository: https://kubernetes.github.io/kube-state-metrics
+  condition: datadog.kubeStateMetricsEnabled
