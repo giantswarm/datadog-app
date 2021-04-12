@@ -1,9 +1,9 @@
 [![CircleCI](https://circleci.com/gh/giantswarm/{APP-NAME}-app.svg?style=shield)](https://circleci.com/gh/giantswarm/{APP-NAME}-app)
 
-# {APP-NAME} chart
+# Datadog chart
 
-Giant Swarm offers a {APP-NAME} App which can be installed in workload clusters.
-Here we define the {APP-NAME} chart with its templates and default configuration.
+Giant Swarm offers a datadog App which can be installed in workload clusters.
+Here we define the datadog chart with its templates and default configuration.
 
 **What is this app?**
 **Why did we add it?**
