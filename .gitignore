@@ -1,0 +1,6 @@
+# app-build-suite artifacts
+*.tgz*
+
+# referenced helm charts
+helm/datadog/charts
+
