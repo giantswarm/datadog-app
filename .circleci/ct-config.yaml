@@ -1,0 +1,4 @@
+---
+chart-repos:
+- datadog-crds=https://helm.datadoghq.com
+- kube-state-metrics=https://kubernetes.github.io/kube-state-metrics
