@@ -7,4 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Initial release 2.0.0 which follows upstream version 2.10.13
+
 [Unreleased]: https://github.com/giantswarm/REPOSITORY_NAME/tree/master
