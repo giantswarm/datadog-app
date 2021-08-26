@@ -74,7 +74,7 @@
     - name: DD_HEALTH_PORT
     {{- $healthPort := .Values.agents.containers.agent.healthPort }}
       value: {{ $healthPort | quote }}
-    {{- if .Values.datadog.dogstatsd.useSocketVolume }}
+    {{- if eq .Values.targetSystem "linux" }}
     - name: DD_DOGSTATSD_SOCKET
       value: {{ .Values.datadog.dogstatsd.socketPath | quote }}
     {{- end }}
@@ -90,6 +90,22 @@
     {{- if .Values.datadog.prometheusScrape.enabled }}
     - name: DD_PROMETHEUS_SCRAPE_ENABLED
       value: "true"
+    {{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+    - name: DD_PROMETHEUS_SCRAPE_CHECKS
+      value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
+    {{- end }}
+    {{- end }}
+    {{- $ignoreAutoConfig := .Values.datadog.ignoreAutoConfig }}
+    {{- if and .Values.datadog.kubeStateMetricsCore.enabled .Values.datadog.kubeStateMetricsCore.ignoreLegacyKSMCheck }}
+      {{- $ignoreAutoConfig = append $ignoreAutoConfig "kubernetes_state" }}
+    {{- end }}
+    {{- if not (empty $ignoreAutoConfig) }}
+    - name: DD_IGNORE_AUTOCONF
+      value: {{ join " " $ignoreAutoConfig | quote }}
+    {{- end }}
+    {{- if .Values.datadog.checksCardinality }}
+    - name: DD_CHECKS_TAG_CARDINALITY
+      value: {{ .Values.datadog.checksCardinality | quote }}
     {{- end }}
 {{- if .Values.agents.containers.agent.env }}
 {{ toYaml .Values.agents.containers.agent.env | indent 4 }}
@@ -124,10 +140,8 @@
       subPath: datadog.yaml
     {{- end }}
     {{- if eq .Values.targetSystem "linux" }}
-    {{- if .Values.datadog.dogstatsd.useSocketVolume }}
     - name: dsdsocket
       mountPath: {{ (dir .Values.datadog.dogstatsd.socketPath) }}
-    {{- end }}
     {{- if or .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill }}
     - name: sysprobe-socket-dir
       mountPath: /var/run/sysprobe
@@ -152,6 +166,10 @@
       mountPath: /var/log/pods
       mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
       readOnly: true
+    - name: logscontainerspath
+      mountPath: /var/log/containers
+      mountPropagation: {{ .Values.datadog.hostVolumeMountPropagation }}
+      readOnly: true
     {{- if not .Values.datadog.criSocketPath }}
     - name: logdockercontainerpath
       mountPath: /var/lib/docker/containers
@@ -171,6 +189,9 @@
       mountPath: C:/ProgramData/docker/containers
       readOnly: true
     {{- end }}
+    {{- end }}
+    {{- if .Values.datadog.kubelet.hostCAPath }}
+{{ include "datadog.kubelet.volumeMount" . | indent 4 }}
     {{- end }}
 {{- if .Values.agents.volumeMounts }}
 {{ toYaml .Values.agents.volumeMounts | indent 4 }}

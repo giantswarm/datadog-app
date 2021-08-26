@@ -14,6 +14,15 @@
     path: {{ .Values.datadog.dogstatsd.hostSocketPath }}
     type: DirectoryOrCreate
   name: dsdsocket
+{{- else }}
+- emptyDir: {}
+  name: dsdsocket
+{{- end }}
+{{- if .Values.datadog.kubelet.hostCAPath }}
+- hostPath:
+    path: {{ .Values.datadog.kubelet.hostCAPath }}
+    type: File
+  name: kubelet-ca
 {{- end }}
 {{- if .Values.datadog.apm.useSocketVolume }}
 - hostPath:
@@ -86,6 +95,9 @@
 - hostPath:
     path: /var/log/pods
   name: logpodpath
+- hostPath:
+    path: /var/log/containers
+  name: logscontainerspath
 {{- if not .Values.datadog.criSocketPath }}
 - hostPath:
     path: /var/lib/docker/containers

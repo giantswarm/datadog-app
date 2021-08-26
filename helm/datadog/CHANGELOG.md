@@ -1,5 +1,216 @@
 # Datadog changelog
 
+## 2.20.1
+
+* Add Statefulsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.20.0
+
+* Update default Agent image tag to `7.30.0`
+* Update default Cluster-Agent image tag to `1.14.0`
+
+## 2.19.9
+
+* Print a configuration notice to clarify the containers filtering behavior when a misconfiguration is detected.
+
+## 2.19.8
+
+* Update `datadog-crds` to `0.3.2`.
+
+## 2.19.7
+
+* Fix test value files in datadog/ci directory.
+
+## 2.19.6
+
+* Update `agent` image tag to `7.29.1`.
+* Update `clusterChecksRunner` image tag to `7.29.1`.
+
+## 2.19.5
+
+* Update link toe `kube-state-metrics` in README.md.
+
+## 2.19.4
+
+* Fix `runtimesocket` volumeMount for the `trace-agent` on windows deployment.
+
+## 2.19.3
+
+* Fix condition defining `should-enable-k8s-resource-monitoring`, which toggles the orchestrator explorer feature.
+
+## 2.19.2
+
+* Fix `dsdsocket` volumeMount for the `trace-agent` on windows deployment.
+
+## 2.19.1
+
+* Fix chart release process after updating the `kube-state-metrics` chart registry.
+
+## 2.19.0
+
+* Move to the new `kube-state-metrics` chart registry, but keep the version `2.13.2`.
+
+## 2.18.2
+
+* Update `kube-state-metrics` requirement chart documentation.
+* Add missing `DD_TAGS` envvar in `cluster-agent` deployment (Fix #304).
+
+## 2.18.1
+
+* Honor `doNotCheckTag` in Env AD detection, preventing install failures with custom images using non semver tags.
+
+## 2.18.0
+
+* Configure and activate the Dogstatsd UDS socket in an "emptyDir" volume by default. It will allow JMX-Fetch to use UDS by default.
+
+## 2.17.1
+
+* Update `cluster-agent` image tag to `1.13.1`.
+
+## 2.17.0
+
+* Update `agent` image tag to `7.29.0`.
+* Update `cluster-agent` image tag to `1.13.0`.
+
+## 2.16.6
+
+* Support template expansion for `clusterAgent.podAnnotations`
+* Support template expansion for `clusterAgent.rbac.serviceAccountAnnotations`
+
+## 2.16.5
+
+* Remove other way of detecting OpenShift cluster as it's not supported by Helm2.
+
+## 2.16.4
+
+* Rename the `Role` and `RoleBinding` of the Datadog Cluster Agent to avoid edge cases where `helm upgrade` can fail because of object name conflict.
+
+## 2.16.3
+
+* Add Daemonsets RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.16.2
+
+* Document Autodiscovery management parameters: `datadog.containerExclude`, `datadog.containerInclude`, `datadog.containerExcludeMetrics`, `datadog.containerIncludeMetrics`, `datadog.containerExcludeLogs` and `datadog.containerIncludeLogs`.
+* Introduce `datadog.includePauseContainer` to control autodiscovery of pause containers.
+* Introduce a deprecation noticed for the undocumented and long deprecated `datadog.acInclude` and `datadog.acExclude`.
+
+## 2.16.1
+
+* Use the pod name as cluster check runner ID to allow deploying multiple cluster check runners on the same node. (Requires agent 7.27.0+)
+
+## 2.16.0
+
+* Always mount `/var/log/containers` for the Datadog Agent to better handle logs file scanning with short-lived containers. (See [datadog-agent#8143](https://github.com/DataDog/datadog-agent/pull/8143))
+
+## 2.15.6
+
+* Set `GODEBUG=x509ignoreCN=0` to revert Agent SSL certificates validation to behaviour to Golang <= 1.14. Notably it fixes issues with Kubelet certificates on AKS with Agent >= 7.28.
+
+## 2.15.5
+
+* Add RBAC rules for the Cluster Agent in order to collect new resources in the Orchestrator Explorer.
+
+## 2.15.4
+
+* Bump Agent version to `7.28.1`.
+
+## 2.15.3
+
+* Fix Cilium network policies.
+
+## 2.15.2
+
+* OpenShift: Automatically use built-in SCCs instead of failing if create SCC option is not used
+
+## 2.15.1
+
+* Add parameter `clusterAgent.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Cluster Agent.
+* Add parameter `agents.rbac.serviceAccountAnnotations` for specifying annotations for dedicated ServiceAccount for Agents.
+* Support template expansion for `agents.podAnnotations`
+
+## 2.15.0
+
+* Bump Agent version to `7.28.0`.
+
+## 2.14.0
+
+* Improve resources labels with kubermetes/helm standard labels.
+
+## 2.13.3
+
+* Add `datadog.checksCardinality` field to configure `DD_CHECKS_TAG_CARDINALITY`.
+* Add a reminder to set the `datadog.site` field if needed.
+
+## 2.13.2
+
+* Fix `YAML parse error on datadog/templates/daemonset.yaml` when autopilot is enabled.
+* Fix "README.md" generation.
+
+## 2.13.1
+
+* Fix Kubelet connection on GKE-autopilot environment: force `http` endpoint to retrieves pods information.
+
+## 2.13.0
+
+* Update `kube-state-metrics` chart version to `2.13.2` that include `kubernetes/kube-state-metrics#1442` fix for `helm2`.
+
+## 2.12.4
+
+* Fix missing namespaces in chart templates
+
+## 2.12.3
+
+* Added `datadog.ignoreAutoConfig` config option to ignore `auto_conf.yaml` configurations.
+
+## 2.12.2
+
+* The Datadog Cluster Agent's Admission Controller now uses a `Role` to watch secrets instead of a `ClusterRole`. (Requires Datadog Cluster Agent v1.12+)
+
+## 2.12.1
+
+* Add more kube-state-metrics core check documentation
+
+## 2.12.0
+
+* Update the Cluster Agent version to `1.12.0`
+* Support kube-state-metrics core check (Requires Datadog Cluster Agent v1.12+)
+
+## 2.11.6
+
+* Improve support for environment autodiscovery by removing explicit setting of `DOCKER_HOST` by default with Agent 7.27+.
+Starting Agent 7.27, the recommended setup is to never set `datadog.dockerSocketPath` or `datadog.criSocketPath`, except if your setup is using non-standard paths.
+
+## 2.11.5
+
+* Remove comment in the `seccomp` json profile, which is break the json parsing.
+
+## 2.11.4
+
+* Add missing system calls to system-probe `seccomp` profile.
+
+## 2.11.3
+
+* Update the documentation with the new path of the `kube-state-metrics` chart
+
+## 2.11.2
+
+* Update `agent.customAgentConfig` config example in the `values.yaml`: removes reference to APM configuration.
+
+## 2.11.1
+
+* Enable `collectDNSStats` by default
+
+## 2.11.0
+
+* Bump Agent version to `7.27.0`.
+* Support configuring advanced openmetrics check parameters via `datadog.prometheusScrape.additionalConfigs`.
+
+## 2.10.14
+
+* Add Kubelet `hostCAPath` and `agentCAPath` parameters to automatically mount and use CA cert from host filesystem for Kubelet connection.
+* Fix default value for DCA hostNetwork
+
 ## 2.10.13
 
 * Fix `security-agent-feature` helper function to support `helm2`.
@@ -52,7 +263,7 @@
 
 ## 2.10.1
 
-* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.26+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
+* Remove the cluster-id configmap mount for process-agent. (Requires Datadog Agent 7.25+ and Datadog Cluster Agent 1.11+, otherwise collection of pods for the Kubernetes Resources page will fail).
 
 ## 2.10.0
 

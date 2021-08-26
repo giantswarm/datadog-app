@@ -3,12 +3,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "datadog.fullname" . }}-cluster-agent
+  namespace: {{ .Release.Namespace }}
   labels:
-    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-    app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{ include "datadog.labels" . | indent 4 }}
+    app.kubernetes.io/component: cluster-agent
     {{- if .Values.clusterAgent.additionalLabels }}
 {{ toYaml .Values.clusterAgent.additionalLabels | indent 4 }}
     {{- end }}
@@ -33,6 +31,8 @@ spec:
   template:
     metadata:
       labels:
+{{ include "datadog.template-labels" . | indent 8 }}
+        app.kubernetes.io/component: cluster-agent
         app: {{ template "datadog.fullname" . }}-cluster-agent
         {{- if .Values.clusterAgent.podLabels }}
 {{ toYaml .Values.clusterAgent.podLabels | indent 8 }}
@@ -71,7 +71,7 @@ spec:
             ]
           }]
       {{- if .Values.clusterAgent.podAnnotations }}
-{{ toYaml .Values.clusterAgent.podAnnotations | indent 8 }}
+{{ tpl (toYaml .Values.clusterAgent.podAnnotations) . | indent 8 }}
       {{- end }}
 
     spec:
@@ -135,6 +135,10 @@ spec:
               secretKeyRef:
                 name: {{ template "datadog.appKeySecretName" . }}
                 key: app-key
+          {{- if .Values.datadog.tags }}
+          - name: DD_TAGS
+            value: {{ tpl (.Values.datadog.tags | join " " | quote) . }}
+          {{- end }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_ENABLED
             value: {{ .Values.clusterAgent.metricsProvider.enabled | quote }}
           - name: DD_EXTERNAL_METRICS_PROVIDER_PORT
@@ -224,6 +228,10 @@ spec:
             value: "true"
           - name: DD_PROMETHEUS_SCRAPE_SERVICE_ENDPOINTS
             value: {{ .Values.datadog.prometheusScrape.serviceEndpoints | quote }}
+          {{- if .Values.datadog.prometheusScrape.additionalConfigs }}
+          - name: DD_PROMETHEUS_SCRAPE_CHECKS
+            value: {{ .Values.datadog.prometheusScrape.additionalConfigs | toJson | quote }}
+          {{- end }}
           {{- end }}
 {{- if .Values.clusterAgent.env }}
 {{ toYaml .Values.clusterAgent.env | indent 10 }}
@@ -250,7 +258,7 @@ spec:
 {{- if .Values.clusterAgent.volumeMounts }}
 {{ toYaml .Values.clusterAgent.volumeMounts | indent 10 }}
 {{- end }}
-{{- if .Values.clusterAgent.confd }}
+{{- if eq (include "need-cluster-agent-confd" .) "true" }}
           - name: confd
             mountPath: /conf.d
             readOnly: true
@@ -272,7 +280,7 @@ spec:
         - name: installinfo
           configMap:
             name: {{ template "datadog.fullname" . }}-installinfo
-{{- if .Values.clusterAgent.confd }}
+{{- if eq (include "need-cluster-agent-confd" .) "true" }}
         - name: confd
           configMap:
             name: {{ template "datadog.fullname" . }}-cluster-agent-confd

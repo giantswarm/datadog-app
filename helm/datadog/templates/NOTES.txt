@@ -245,3 +245,57 @@ The last version of the KSM chart using "rbac.authorization.k8s.io/v1beta1" is 2
 helm install ksm https://charts.helm.sh/stable/packages/kube-state-metrics-2.9.1.tgz
 
 {{- end }}
+
+{{- if and .Values.datadog.kubeStateMetricsCore.enabled (eq (include "cluster-agent-enabled" .) "false")}}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.kubeStateMetricsCore.enabled but you disabled the cluster agent. This configuration is unsupported and the kube-state-metrics core check can't be configured.
+To enable it please set clusterAgent.enabled to 'true'.
+{{- end }}
+
+
+{{- if or .Values.datadog.acInclude .Values.datadog.acExclude }}
+#################################################################
+####               WARNING: Deprecation notice               ####
+#################################################################
+
+You are using the datadog.acInclude or datadog.acExclude parameters, which have been deprecated since Datadog Agent 7.20. Please use datadog.containerInclude and datadog.containerExclude instead.
+{{- end }}
+
+
+{{- $hasContainerIncludeEnv := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_INCLUDE" }}
+    {{- $hasContainerIncludeEnv = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerInclude := false }}
+{{- if or .Values.datadog.containerInclude $hasContainerIncludeEnv }}
+  {{- $hasContainerInclude = true }}
+{{- end }}
+
+{{- $hasContainerExcludeEnv := false }}
+{{- range $key := .Values.datadog.env }}
+  {{- if eq $key.name "DD_CONTAINER_EXCLUDE" }}
+    {{- $hasContainerExcludeEnv = true }}
+  {{- end }}
+{{- end }}
+
+{{- $hasContainerExclude := false }}
+{{- if or .Values.datadog.containerExclude $hasContainerExcludeEnv }}
+  {{- $hasContainerExclude = true }}
+{{- end }}
+
+{{- if and $hasContainerInclude (not $hasContainerExclude) }}
+
+#################################################################
+####               WARNING: Configuration notice             ####
+#################################################################
+
+You are using datadog.containerInclude or DD_CONTAINER_INCLUDE but you haven't excluded any containers. The default behavior is to include everything; if the intent is to exclude all other containers, set datadog.containerExclude to '.*' .
+
+{{- end }}
