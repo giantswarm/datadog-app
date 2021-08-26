@@ -1,6 +1,9 @@
 # The purpose of this template is to define a minimal set of environment
 # variables required to operate dedicated containers in the daemonset
 {{- define "containers-common-env" -}}
+# Needs to be removed when Agent N-2 is built with Golang 1.17
+- name: GODEBUG
+  value: x509ignoreCN=0
 - name: DD_API_KEY
   valueFrom:
     secretKeyRef:
@@ -13,6 +16,14 @@
 {{- if .Values.datadog.kubelet.tlsVerify | quote }}
 - name: DD_KUBELET_TLS_VERIFY
   value: {{ .Values.datadog.kubelet.tlsVerify | quote }}
+{{- end }}
+{{- if ne (include "datadog.kubelet.mountPath" .) "" }}
+- name: DD_KUBELET_CLIENT_CA
+  value: {{ include "datadog.kubelet.mountPath" . }}
+{{- end }}
+{{- if .Values.providers.gke.autopilot }}
+- name: DD_KUBERNETES_HTTPS_KUBELET_PORT
+  value: "0"
 {{- end }}
 {{- if .Values.datadog.clusterName }}
 {{- template "check-cluster-name" . }}
@@ -80,6 +91,30 @@
 - name: DD_CONTAINER_EXCLUDE_LOGS
   value: {{ .Values.datadog.containerExcludeLogs | quote }}
 {{- end }}
+{{- if not .Values.datadog.excludePauseContainer }}
+- name: DD_EXCLUDE_PAUSE_CONTAINER
+  value: "false"
+{{- end }}
+{{- if eq (include "agent-has-env-ad" .) "true" }}
+{{- if .Values.datadog.dockerSocketPath }}
+- name: DOCKER_HOST
+{{- if eq .Values.targetSystem "linux" }}
+  value:  unix://{{ print "/host/" .Values.datadog.dockerSocketPath | clean }}
+{{- end }}
+{{- if eq .Values.targetSystem "windows" }}
+  value: npipe://{{ .Values.datadog.dockerSocketPath | replace "\\" "/" }}
+{{- end }}
+{{- end }}
+{{- if .Values.datadog.criSocketPath }}
+- name: DD_CRI_SOCKET_PATH
+{{- if eq .Values.targetSystem "linux" }}
+  value: {{ print "/host/" .Values.datadog.criSocketPath | clean }}
+{{- end }}
+{{- if eq .Values.targetSystem "windows" }}
+  value: {{ .Values.datadog.criSocketPath }}
+{{- end }}
+{{- end }}
+{{- else }} # No support for env AD
 {{- if or .Values.providers.gke.autopilot .Values.datadog.criSocketPath }}
 - name: DD_CRI_SOCKET_PATH
   value: {{ print "/host/" (include "datadog.dockerOrCriSocketPath" .) | clean }}
@@ -90,6 +125,7 @@
 {{- end }}
 {{- if eq .Values.targetSystem "windows" }}
   value: npipe://{{ (include "datadog.dockerOrCriSocketPath" .) | replace "\\" "/" }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ include "provider-env" . }}

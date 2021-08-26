@@ -19,6 +19,40 @@
 {{- end -}}
 {{- end -}}
 
+{{/*
+Check if target cluster is running OpenShift.
+*/}}
+{{- define "is-openshift" -}}
+{{- if .Capabilities.APIVersions.Has "quota.openshift.io/v1/ClusterResourceQuota" -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{- define "agent-has-env-ad" -}}
+{{- if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $length := len (split "." $version) -}}
+{{- if and (eq $length 1) (eq $version "6") -}}
+{{- $version = "6.27.0" -}}
+{{- end -}}
+{{- if and (eq $length 1) (eq $version "7") -}}
+{{- $version = "7.27.0" -}}
+{{- end -}}
+{{- if and (eq $length 1) (eq $version "latest") -}}
+{{- $version = "7.27.0" -}}
+{{- end -}}
+{{- if semverCompare "^6.27.0-0 || ^7.27.0-0" $version -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- else -}}
+true
+{{- end -}}
+{{- end -}}
+
 {{- define "check-cluster-name" }}
 {{- $length := len .Values.datadog.clusterName -}}
 {{- if (gt $length 80)}}
@@ -319,7 +353,7 @@ false
 Return true if Kubernetes resource monitoring (orchestrator explorer) should be enabled.
 */}}
 {{- define "should-enable-k8s-resource-monitoring" -}}
-{{- if and .Values.datadog.orchestratorExplorer.enabled (or .Values.clusterAgent.enabled (include "existingClusterAgent-configured" .)) -}}
+{{- if and .Values.datadog.orchestratorExplorer.enabled (or .Values.clusterAgent.enabled (eq (include "existingClusterAgent-configured" .) "true")) -}}
 true
 {{- else -}}
 false
@@ -333,6 +367,27 @@ Returns provider kind
 {{- if .Values.providers.gke.autopilot -}}
 gke-autopilot
 {{- end -}}
+{{- end -}}
+
+
+{{/*
+Common template labels
+*/}}
+{{- define "datadog.template-labels" -}}
+app.kubernetes.io/name: "{{ template "datadog.fullname" . }}"
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
+
+{{/*
+Common labels
+*/}}
+{{- define "datadog.labels" -}}
+helm.sh/chart: '{{ include "datadog.chart" . }}'
+{{ include "datadog.template-labels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
 {{- end -}}
 
 {{/*
@@ -351,5 +406,45 @@ Returns provider-specific env vars if any
 {{- if include "provider-kind" . -}}
 - name: DD_PROVIDER_KIND
   value: {{ include "provider-kind" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return Kubelet CA path inside Agent containers
+*/}}
+{{- define "datadog.kubelet.mountPath" -}}
+{{- if .Values.datadog.kubelet.agentCAPath -}}
+{{- .Values.datadog.kubelet.agentCAPath -}}
+{{- else if .Values.datadog.kubelet.hostCAPath -}}
+{{- if eq .Values.targetSystem "windows" -}}
+C:/var/kubelet-ca/{{ base .Values.datadog.kubelet.hostCAPath }}
+{{- else -}}
+/var/run/kubelet-ca/{{ base .Values.datadog.kubelet.hostCAPath }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return Kubelet volumeMount
+*/}}
+{{- define "datadog.kubelet.volumeMount" -}}
+- name: kubelet-ca
+  {{- if eq .Values.targetSystem "linux" }}
+  mountPath: {{ include "datadog.kubelet.mountPath" . }}
+  {{- end }}
+  {{- if eq .Values.targetSystem "windows" }}
+  mountPath: {{ dir (include "datadog.kubelet.mountPath" .) }}
+  {{- end }}
+  readOnly: true
+{{- end -}}
+
+{{/*
+Return true if the Cluster Agent needs a confd configmap
+*/}}
+{{- define "need-cluster-agent-confd" -}}
+{{- if (or (.Values.clusterAgent.confd) (.Values.datadog.kubeStateMetricsCore.enabled)) -}}
+true
+{{- else -}}
+false
 {{- end -}}
 {{- end -}}
