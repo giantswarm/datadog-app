@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2021-08-26
+
 ### Updated
 
 - Upstream sync 2.1.0 which follows upstream version [2.20.1](https://github.com/giantswarm/datadog-app/blob/master/helm/datadog/CHANGELOG.md) 
@@ -17,5 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 2.0.0 which follows upstream version 2.10.13
 
-[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/giantswarm/datadog-app/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/giantswarm/datadog-app/releases/tag/v2.0.0
