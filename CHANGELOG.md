@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Remove SE Linux support to work on latest Flatcar versions (disabled SE linux by default).
+
 ## [2.1.0] - 2021-08-26
 
 ### Updated
