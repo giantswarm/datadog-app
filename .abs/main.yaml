@@ -1,6 +1,5 @@
-skip-steps: 
-  - validate
-  - static_check
+skip-steps: validate
+skip-steps: static_check
 replace-chart-version-with-git: true
 generate-metadata: true
 chart-dir: ./helm/datadog
