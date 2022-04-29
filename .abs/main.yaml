@@ -1,4 +1,4 @@
-skip-steps: test_all
+skip-steps: [validate, static_check]
 replace-chart-version-with-git: true
 generate-metadata: true
 chart-dir: ./helm/datadog
