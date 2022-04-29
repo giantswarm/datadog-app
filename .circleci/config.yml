@@ -16,3 +16,4 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+          push_to_oci_registry: true
