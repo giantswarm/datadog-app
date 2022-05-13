@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Push helm chart to OCI registry.
+
 ## [2.2.0] - 2022-03-29
 
 ### Fixed
@@ -17,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 
-- Upstream sync 2.1.0 which follows upstream version [2.20.1](https://github.com/giantswarm/datadog-app/blob/master/helm/datadog/CHANGELOG.md) 
+- Upstream sync 2.1.0 which follows upstream version [2.20.1](https://github.com/giantswarm/datadog-app/blob/master/helm/datadog/CHANGELOG.md)
 
 ## [2.0.0] - 2021-04-16
 
