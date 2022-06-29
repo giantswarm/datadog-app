@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.3.0] - 2022-06-28
 
+### Changed
+
+- Upgrade upstream chart from version 2.30.19 to 2.35.6
+- Set tlsVerify = true by default
+
+
 ## [2.2.1] - 2022-05-13
 
 ### Added
