@@ -240,6 +240,13 @@ Accepts a map with `port` (default port) and `settings` (probe settings).
 Return a remote image path based on `.Values` (passed as root) and `.` (any `.image` from `.Values` passed as parameter)
 */}}
 {{- define "image-path" -}}
+{{- if .image.digest -}}
+{{- if .image.repository -}}
+{{- .image.repository -}}@{{ .image.digest }}
+{{- else -}}
+{{ .root.registry }}/{{ .image.name }}@{{ .image.digest }}
+{{- end -}}
+{{- else -}}
 {{- $tagSuffix := "" -}}
 {{- if .image.tagSuffix -}}
 {{- $tagSuffix = printf "-%s" .image.tagSuffix -}}
@@ -250,12 +257,12 @@ Return a remote image path based on `.Values` (passed as root) and `.` (any `.im
 {{ .root.registry }}/{{ .image.name }}:{{ .image.tag }}{{ $tagSuffix }}
 {{- end -}}
 {{- end -}}
-
+{{- end -}}
 {{/*
 Return true if a system-probe feature is enabled.
 */}}
 {{- define "system-probe-feature" -}}
-{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
+{{- if or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled .Values.datadog.networkMonitoring.enabled .Values.datadog.systemProbe.enableTCPQueueLength .Values.datadog.systemProbe.enableOOMKill .Values.datadog.serviceMonitoring.enabled -}}
 true
 {{- else -}}
 false
@@ -278,7 +285,7 @@ false
 Return true if a security-agent feature is enabled.
 */}}
 {{- define "security-agent-feature" -}}
-{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled -}}
+{{- if or .Values.datadog.securityAgent.compliance.enabled .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled -}}
 true
 {{- else -}}
 false
@@ -311,7 +318,7 @@ false
 Return true if the runtime security features should be enabled.
 */}}
 {{- define "should-enable-runtime-security" -}}
-{{- if and (not .Values.providers.gke.autopilot) .Values.datadog.securityAgent.runtime.enabled -}}
+{{- if and (not .Values.providers.gke.autopilot) (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) -}}
 true
 {{- else -}}
 false
@@ -435,6 +442,50 @@ gke-autopilot
 {{- end -}}
 {{- end -}}
 
+{{/*
+Return the service account name
+*/}}
+{{- define "agents.serviceAccountName" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent
+{{- else if .Values.agents.rbac.create -}}
+{{ template "datadog.fullname" . }}
+{{- else -}}
+{{ .Values.agents.rbac.serviceAccountName }}
+{{- end -}}
+{{- end -}}
+
+{{- define "agents-useConfigMap-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-datadog-yaml
+{{- else -}}
+{{ template "datadog.fullname" . }}-datadog-yaml
+{{- end -}}
+{{- end -}}
+
+{{- define "agents-install-info-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-installinfo
+{{- else -}}
+{{ template "datadog.fullname" . }}-installinfo
+{{- end -}}
+{{- end -}}
+
+{{- define "agents.confd-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-confd
+{{- else -}}
+{{ template "datadog.fullname" . }}-confd
+{{- end -}}
+{{- end -}}
+
+{{- define "datadog-checksd-configmap-name" -}}
+{{- if .Values.providers.gke.autopilot -}}
+datadog-agent-checksd
+{{- else -}}
+{{ template "datadog.fullname" . }}-checksd
+{{- end -}}
+{{- end -}}
 
 {{/*
 Common template labels
@@ -453,6 +504,9 @@ helm.sh/chart: '{{ include "datadog.chart" . }}'
 {{ include "datadog.template-labels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+{{- if .Values.commonLabels}}
+{{ toYaml .Values.commonLabels }}
 {{- end }}
 {{- end -}}
 
@@ -527,6 +581,17 @@ false
 {{- end -}}
 
 {{/*
+Return the local service name
+*/}}
+{{- define "localService.name" -}}
+{{- if ne .Values.agents.localService.overrideName "" }}
+{{- .Values.agents.localService.overrideName -}}
+{{- else -}}
+{{ template "datadog.fullname" . }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return true if runtime compilation is enabled in the system-probe
 */}}
 {{- define "runtime-compilation-enabled" -}}
@@ -542,7 +607,7 @@ Return true if secret RBACs are needed for secret backend.
 */}}
 {{- define "need-secret-permissions" -}}
 {{- if .Values.datadog.secretBackend.command -}}
-{{- if eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh" -}}
+{{- if and .Values.datadog.secretBackend.enableGlobalPermissions (eq .Values.datadog.secretBackend.command "/readsecret_multiple_providers.sh") -}}
 true
 {{- end -}}
 {{- else -}}
@@ -574,5 +639,66 @@ Return the appropriate apiVersion for PodDisruptionBudget policy APIs.
 "policy/v1"
 {{- else -}}
 "policy/v1beta1"
+{{- end -}}
+{{- end -}}
+
+{{/*
+Returns securityContext depending of the OS
+*/}}
+{{- define "generate-security-context" -}}
+{{- if .securityContext -}}
+{{- if eq .targetSystem "windows" -}}
+  {{- if .securityContext.windowsOptions }}
+securityContext:
+  windowsOptions:
+    {{ toYaml .securityContext.windowsOptions }}
+  {{- end -}}
+{{- else }}
+securityContext:
+{{ toYaml .securityContext | indent 2 }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Verifies the OTLP/gRPC endpoint prefix.
+gRPC supports several naming schemes: https://github.com/grpc/grpc/blob/master/doc/naming.md
+The Datadog Agent Helm Chart currently only supports 'host:port' (usually '0.0.0.0:port').
+*/}}
+{{- define "verify-otlp-grpc-endpoint-prefix" -}}
+{{- if hasPrefix "unix:" . }}
+{{ fail "'unix' protocol is not currently supported on OTLP/gRPC endpoint" }}
+{{- end }}
+{{- if hasPrefix "unix-abstract:" . }}
+{{ fail "'unix-abstract' protocol is not currently supported on OTLP/gRPC endpoint" }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Verifies that an OTLP endpoint has a port explicitly set.
+*/}}
+{{- define "verify-otlp-endpoint-port" -}}
+{{- if not ( regexMatch ":[0-9]+$" . ) }}
+{{ fail "port must be set explicitly on OTLP endpoints" }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Returns the flag used to specify the config file for the process-agent.
+In 7.36, `--config` was deprecated and `--cfgpath` should be used instead.
+*/}}
+{{- define "process-agent-config-file-flag" -}}
+{{- if  .Values.providers.gke.autopilot -}}
+-config
+{{- else if not .Values.agents.image.doNotCheckTag -}}
+{{- $version := .Values.agents.image.tag | toString | trimSuffix "-jmx" -}}
+{{- $length := len (split "." $version ) -}}
+{{- if and (gt $length 1) (not (semverCompare "^6.36.0 || ^7.36.0" $version)) -}}
+--config
+{{- else -}}
+--cfgpath
+{{- end -}}
+{{- else -}}
+--config
 {{- end -}}
 {{- end -}}

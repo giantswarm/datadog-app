@@ -9,15 +9,10 @@
 - hostPath:
     path: /sys/fs/cgroup
   name: cgroups
-{{- if eq (include "should-enable-system-probe" .) "true" }}
-{{- if .Values.datadog.systemProbe.osReleasePath }}
 - hostPath:
-    path: {{ .Values.datadog.systemProbe.osReleasePath }}
+    path: {{ .Values.datadog.systemProbe.osReleasePath | default .Values.datadog.osReleasePath }}
   name: os-release-file
-{{- else }}
-- hostPath:
-    path: /etc/os-release
-  name: etc-os-release
+{{- if eq (include "should-enable-system-probe" .) "true" }}
 - hostPath:
     path: /etc/redhat-release
   name: etc-redhat-release
@@ -27,7 +22,6 @@
 - hostPath:
     path: /etc/lsb-release
   name: etc-lsb-release
-{{- end -}}
 {{- end -}}
 {{- if eq (include "should-mount-hostPath-for-dsd-socket" .) "true" }}
 - hostPath:
@@ -61,7 +55,7 @@
 {{- if (or (.Values.datadog.confd) (.Values.datadog.autoconf)) }}
 - name: confd
   configMap:
-    name: {{ template "datadog.fullname" . }}-confd
+    name: {{ include "agents.confd-configmap-name" . }}
 {{- end }}
 {{- if eq (include "should-enable-system-probe" .) "true" }}
 - name: sysprobe-config
@@ -111,6 +105,12 @@
     path: /etc/pki
   name: public-key-dir
 - hostPath:
+    path: /etc/yum/vars
+  name: yum-vars-dir
+- hostPath:
+    path: /etc/dnf/vars
+  name: dnf-vars-dir
+- hostPath:
     path: /etc/rhsm
   name: rhel-subscription-dir
 {{- else }}
@@ -143,7 +143,7 @@
     name: {{ .Values.datadog.securityAgent.compliance.configMap }}
 {{- end }}
 {{- end }}
-{{- if and .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.policies.configMap }}
+{{- if and (or .Values.datadog.securityAgent.runtime.enabled .Values.datadog.securityAgent.runtime.fimEnabled) .Values.datadog.securityAgent.runtime.policies.configMap }}
 - name: runtimepoliciesdir
   configMap:
     name: {{ .Values.datadog.securityAgent.runtime.policies.configMap }}
@@ -154,7 +154,7 @@
     path: {{ template "datadog.hostMountRoot" . }}/logs
   name: pointerdir
 - hostPath:
-    path: /var/log/pods
+    path: {{ .Values.datadog.kubelet.podLogsPath | default "/var/log/pods" }}
   name: logpodpath
 - hostPath:
     path: /var/log/containers

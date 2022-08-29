@@ -33,6 +33,7 @@ data:
       max_tracked_connections: {{ $.Values.datadog.systemProbe.maxTrackedConnections }}
       conntrack_max_state_size: {{ $.Values.datadog.systemProbe.conntrackMaxStateSize }}
       enable_runtime_compiler: {{ $.Values.datadog.systemProbe.enableRuntimeCompiler }}
+      enable_kernel_header_download: {{ $.Values.datadog.systemProbe.enableKernelHeaderDownload }}
       runtime_compiler_output_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/build
       kernel_header_download_dir: {{ $.Values.datadog.systemProbe.runtimeCompilationAssetDir }}/kernel-headers
       apt_config_dir: /host/etc/apt
@@ -45,11 +46,16 @@ data:
       enabled: {{ $.Values.datadog.serviceMonitoring.enabled }}
     runtime_security_config:
       enabled: {{ $.Values.datadog.securityAgent.runtime.enabled }}
+      fim_enabled: {{ $.Values.datadog.securityAgent.runtime.fimEnabled }}
       socket: /var/run/sysprobe/runtime-security.sock
       policies:
         dir: /etc/datadog-agent/runtime-security.d
       syscall_monitor:
         enabled: {{ $.Values.datadog.securityAgent.runtime.syscallMonitor.enabled }}
+      network:
+        enabled: {{ $.Values.datadog.securityAgent.runtime.network.enabled }}
+      activity_dump:
+        traced_cgroups_count: 0
 
 {{- if eq .Values.datadog.systemProbe.seccomp "localhost/system-probe" }}
 ---
@@ -76,6 +82,7 @@ data:
             "capget",
             "capset",
             "chdir",
+            "chmod",
             "clock_gettime",
             "clone",
             "close",
@@ -154,6 +161,7 @@ data:
             "newfstatat",
             "open",
             "openat",
+            "openat2",
             "pause",
             "perf_event_open",
             "pipe",
@@ -172,6 +180,7 @@ data:
             "recvmsg",
             "rename",
             "renameat",
+            "renameat2",
             "restart_syscall",
             "rmdir",
             "rt_sigaction",
@@ -197,6 +206,7 @@ data:
             "setgid32",
             "setgroups",
             "setgroups32",
+            "setitimer",
             "setns",
             "setrlimit",
             "setsid",
@@ -243,6 +253,22 @@ data:
             }
           ],
           "comment": "",
+          "includes": {},
+          "excludes": {}
+        },
+        {
+          "names": [
+            "kill"
+          ],
+          "action": "SCMP_ACT_ALLOW",
+          "args": [
+            {
+              "index": 1,
+              "value": 0,
+              "op": "SCMP_CMP_EQ"
+            }
+          ],
+          "comment": "allow process detection via kill",
           "includes": {},
           "excludes": {}
         }
