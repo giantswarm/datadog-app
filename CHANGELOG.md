@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.4.0] - 2022-08-29
+
 ## [2.3.1] - 2022-06-29
 
 ### Fixed
@@ -45,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 2.0.0 which follows upstream version 2.10.13
 
-[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.3.1...HEAD
+[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/giantswarm/datadog-app/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/giantswarm/datadog-app/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/giantswarm/datadog-app/compare/v2.2.1...v2.3.0
 [2.2.1]: https://github.com/giantswarm/datadog-app/compare/v2.2.0...v2.2.1
