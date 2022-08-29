@@ -1,5 +1,77 @@
 # Datadog changelog
 
+## 2.37.6
+
+* Add `chmod` to allowed actions in system-probe seccomp profile
+
+## 2.37.5
+
+* Mount host release files for proper host OS detection
+
+## 2.37.4
+
+* Add `digest` as a configurable value for all datadog images used
+
+## 2.37.3
+
+* Update default agent image version tag to `7.38.2`.
+* Rename view CI values.yaml files to be executed by the CI.
+
+## 2.37.2
+
+* Set traced_cgroups_count default value to 0 in the system-config file for CWS.
+
+## 2.37.1
+
+* Default Datadog Agent image to `7.38.1`.
+
+## 2.37.0
+
+* Default Datadog Agent image to `7.38.0`.
+* Default Datadog Cluster Agent image to `1.22.0`.
+
+## 2.36.9
+
+* Add `/etc/dnf/vars` and `/etc/yum/vars` to the default package management directories mounted for kernel header downloading.
+
+## 2.36.8
+
+* Add `datadog.clusterName` on clusterCheckRunner pods
+
+## 2.36.7
+* Add `priorityPreemptionPolicyValue` as a configurable value on the Agent charts
+
+## 2.36.6
+
+* Fix GKE Autopilot installation. The `process-agent` command must
+  use the `-config` argument to be compliant with the Datadog Agent's
+  GKE Autopilot security profile.
+
+## 2.36.5
+
+* Use `regexFind` in favor of `mustRegexFind` to support helm2.
+
+## 2.36.4
+
+* Support `commonlabels` configuration to be able to add common labels on all resources created by the chart.
+
+## 2.36.3
+
+* Fix usage of deprecated command flags in the process-agent.
+
+## 2.36.2
+
+* Documentation updates to comments in some agent templates
+
+## 2.36.1
+
+* Add `datadog.otlp` section to configure OTLP ingest.
+
+## 2.36.0
+
+* Default Datadog Agent image to `7.37.1`.
+* Default Datadog Cluster Agent image to `1.21.0`.
+
 ## 2.35.6
 
 * Fix `include` in clusterchecks deployment template.
