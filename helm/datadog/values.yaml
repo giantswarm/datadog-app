@@ -14,6 +14,10 @@ fullnameOverride:  # ""
 # targetSystem -- Target OS for this deployment (possible values: linux, windows)
 targetSystem: "linux"
 
+# commonLabels -- Labels to apply to all resources
+commonLabels: {}
+# team_name: dev
+
 # registry -- Registry to use for all Agent images (default gcr.io)
 
 ## Currently we offer Datadog Agent images on:
@@ -362,6 +366,24 @@ datadog:
     # datadog.apm.hostSocketPath -- Host path to the trace-agent socket
     hostSocketPath: /var/run/datadog/
 
+  ## OTLP ingest related configuration
+  otlp:
+    receiver:
+      protocols:
+        # datadog.otlp.receiver.protocols.grpc - OTLP/gRPC configuration
+        grpc:
+          # datadog.otlp.receiver.protocols.grpc.enabled -- Enable the OTLP/gRPC endpoint
+          enabled: false
+          # datadog.otlp.receiver.procotols.grpc.endpoint -- OTLP/gRPC endpoint
+          endpoint: "0.0.0.0:4317"
+
+        # datadog.otlp.receiver.protocols.http - OTLP/HTTP configuration
+        http:
+          # datadog.otlp.receiver.protocols.http.enabled -- Enable the OTLP/HTTP endpoint
+          enabled: false
+          # datadog.otlp.receiver.protocols.http.endpoint -- OTLP/HTTP endpoint
+          endpoint: "0.0.0.0:4318"
+
   # datadog.envFrom -- Set environment variables for all Agents directly from configMaps and/or secrets
 
   ## envFrom to pass configmaps or secrets as environment
@@ -437,6 +459,9 @@ datadog:
     # datadog.processAgent.processDiscovery -- Enables or disables autodiscovery of integrations
     processDiscovery: false
 
+  # datadog.osReleasePath -- Specify the path to your os-release file
+  osReleasePath: /etc/os-release
+
   ## Enable systemProbe agent and provide custom configs
   systemProbe:
 
@@ -482,9 +507,6 @@ datadog:
     #   hostPath: /etc/apt
     #   mountPath: /host/etc/apt
     ## If this list is empty, then all necessary package management directories (for all supported OSs) will be mounted.
-
-    # datadog.systemProbe.osReleasePath -- Specify the path to your os-release file if you don't want to attempt mounting all `/etc/*-release` file by default
-    osReleasePath:
 
     # datadog.systemProbe.runtimeCompilationAssetDir -- Specify a directory for runtime compilation assets to live in
     runtimeCompilationAssetDir: /var/tmp/datadog-agent/system-probe
@@ -673,7 +695,10 @@ clusterAgent:
     name: cluster-agent
 
     # clusterAgent.image.tag -- Cluster Agent image tag to use
-    tag: 1.20.0
+    tag: 1.22.0
+
+    # clusterAgent.image.digest -- Cluster Agent image digest to use, takes precedence over tag if specified
+    digest: ""
 
     # clusterAgent.image.repository -- Override default registry + image.name for Cluster Agent
     repository:
@@ -983,7 +1008,10 @@ agents:
     name: agent
 
     # agents.image.tag -- Define the Agent version to use
-    tag: 7.36.1
+    tag: 7.38.2
+
+    # agents.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
+    digest: ""
 
     # agents.image.tagSuffix -- Suffix to append to Agent tag
 
@@ -1347,6 +1375,9 @@ agents:
   # agents.priorityClassName -- Sets PriorityClassName if defined
   priorityClassName:
 
+  # agents.priorityPreemptionPolicyValue -- Set to "Never" to change the PriorityClass to non-preempting
+  priorityPreemptionPolicyValue: PreemptLowerPriority
+
   # agents.priorityClassValue -- Value used to specify the priority of the scheduling of Datadog Agent's Daemonset pods.
 
   ## The PriorityClass uses PreemptLowerPriority.
@@ -1415,7 +1446,10 @@ clusterChecksRunner:
     name: agent
 
     # clusterChecksRunner.image.tag -- Define the Agent version to use
-    tag: 7.36.1
+    tag: 7.38.2
+
+    # clusterChecksRunner.image.digest -- Define Agent image digest to use, takes precedence over tag if specified
+    digest: ""
 
     # clusterChecksRunner.image.tagSuffix -- Suffix to append to Agent tag
 
