@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.0] - 2022-11-03
+
 ### Updated
 
 - Upgrade container image for agent from 7.38.2 to 7.40.0 ([changelog](https://github.com/DataDog/datadog-agent/blob/main/CHANGELOG.rst))
@@ -57,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 2.0.0 which follows upstream version 2.10.13
 
-[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.4.0...HEAD
+[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/giantswarm/datadog-app/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/giantswarm/datadog-app/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/giantswarm/datadog-app/compare/v2.3.0...v2.3.1
 [2.3.0]: https://github.com/giantswarm/datadog-app/compare/v2.2.1...v2.3.0
