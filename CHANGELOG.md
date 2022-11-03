@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Updated
+
+- Upgrade container image for agent from 7.38.2 to 7.40.0 ([changelog](https://github.com/DataDog/datadog-agent/blob/main/CHANGELOG.rst))
+- Upgrade container image for cluster-agent from 1.22.0 to 7.40.0 ([changelog](https://github.com/DataDog/datadog-agent/blob/main/CHANGELOG-DCA.rst)). 
+  Note: Despite the major version change, no breaking changes are stated by Datadog. The major version change is due to aligning
+  the versioning of agent and cluster-agent with version 7.39.0.
+
 ## [2.4.0] - 2022-08-29
 
 ### Changed
