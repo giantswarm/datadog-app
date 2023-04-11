@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- [BREAKING] Migration to chart-dependency.
+
+You should include your whole values in a `datadog` path.
+
+Before:
+
+```yaml
+datadog:
+  apiKey: xxxx
+  clusterName: giantswarm-abc12
+  site: datadoghq.eu
+```
+
+After:
+
+```yaml
+datadog:
+  datadog:
+    apiKey: xxxx
+    clusterName: giantswarm-abc12
+    site: datadoghq.eu
+```
+
 ## [2.5.0] - 2022-11-03
 
 ### Updated
