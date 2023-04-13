@@ -5,7 +5,7 @@ datadog:
 
   clusterAgent:
     image:
-      tag: 7.40.0
+      tag: 7.43.1
 
     podSecurity:
       podSecurityPolicy:
@@ -13,7 +13,7 @@ datadog:
 
   agents:
     image:
-      tag: 7.40.0
+      tag: 7.43.1
 
     podSecurity:
       podSecurityPolicy:
@@ -27,4 +27,4 @@ datadog:
         enabled: false
   clusterChecksRunner:
     image:
-      tag: 7.40.0
+      tag: 7.43.1
