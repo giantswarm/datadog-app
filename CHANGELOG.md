@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Update datadog agent to 7.43.1 and datadog chart to 3.25.3.
+- Update upstream chart from version 2.37.6 to 3.25.3.
 - [BREAKING] Migration to chart-dependency.
 
 You should include your whole values in a `datadog` path.

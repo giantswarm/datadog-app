@@ -4,17 +4,11 @@ datadog:
       hostCAPath: /var/lib/kubelet/pki/kubelet.crt
 
   clusterAgent:
-    image:
-      tag: 7.43.1
-
     podSecurity:
       podSecurityPolicy:
         create: true
 
   agents:
-    image:
-      tag: 7.43.1
-
     podSecurity:
       podSecurityPolicy:
         create: true
@@ -25,6 +19,3 @@ datadog:
 
       apparmor:
         enabled: false
-  clusterChecksRunner:
-    image:
-      tag: 7.43.1
