@@ -1,15 +1,21 @@
 checks:
   addAllBuiltIn: true
   exclude:
-  - "unset-cpu-requirements"
-  - "unset-memory-requirements"
+  - "use-namespace"
+  - "access-to-secrets"
+  - "dnsconfig-options"
+  - "minimum-three-replicas"
+  - "no-liveness-probe"
+  - "non-isolated-pod"
+  - "no-node-affinity"
+  - "no-readiness-probe"
   - "no-read-only-root-fs"
-  - "run-as-non-root"
+  - "no-rolling-update-strategy"
+  - "read-secret-from-env-var"
   - "required-annotation-email"
   - "required-label-owner"
-  - "no-liveness-probe"
-  - "no-readiness-probe"
+  - "run-as-non-root"
   - "sensitive-host-mounts"
+  - "unset-cpu-requirements"
+  - "unset-memory-requirements"
   - "writable-host-mount"
-  # Chart dependency 'datadog-crds' defines a CRD using apiextensions.k8s.io/v1beta1
-  - "no-extensions-v1beta"
