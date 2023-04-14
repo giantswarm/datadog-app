@@ -30,24 +30,9 @@ datadog:
     site: datadoghq.eu
 ```
 
-### Sample App CR and ConfigMap for the management cluster
-If you have access to the Kubernetes API on the management cluster, you could create
-the App CR and ConfigMap directly.
+### How to create App CR and ConfigMap for the management cluster
 
-Here is an example that would install the app to
-workload cluster `abc12`:
-
-```
-# appCR.yaml
-
-```
-
-```
-# user-values-configmap.yaml
-
-```
-
-See our [full reference page on how to configure applications](https://docs.giantswarm.io/app-platform/app-configuration/) for more details.
+See our [full reference page on how to configure applications](https://docs.giantswarm.io/app-platform/app-configuration/).
 
 ## Credit
 
