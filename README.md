@@ -19,15 +19,31 @@ There are 3 ways to install this app onto a workload cluster.
 
 ## Configuring
 
-### values.yaml
+### datadog-user-values
 **This is an example of a values file you could upload using our web interface.**
 ```
-# values.yaml
+# datadog-user-values.yaml
 datadog:
   datadog:
-    apiKey: xxxx
     clusterName: giantswarm-abc12
     site: datadoghq.eu
+    clusterAgent:
+      podSecurity:
+        podSecurityPolicy:
+          create: true
+    agents:
+      podSecurity:
+        podSecurityPolicy:
+          create: true
+```
+
+### datadog-user-secrets
+**This is an example of a secret file you could upload using our web interface.**
+```
+# datadog-user-secrets.yaml
+datadog:
+  datadog:
+    apiKey: XXX
 ```
 
 ### How to create App CR and ConfigMap for the management cluster

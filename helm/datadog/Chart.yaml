@@ -1,8 +1,8 @@
 ---
 apiVersion: v2
 name: datadog
-version: 2.5.0
-appVersion: 2.37.6
+version: 3.0.0
+appVersion: 7.43.0
 description: Datadog Agent
 type: application
 keywords:
@@ -17,7 +17,7 @@ sources:
   - https://github.com/DataDog/datadog-agent
 dependencies:
   - name: datadog
-    version: 2.37.6
+    version: 3.13.0
     repository: https://helm.datadoghq.com
 maintainers:
   - name: giantswarm/team-atlas
