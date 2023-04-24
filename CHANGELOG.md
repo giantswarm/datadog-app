@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.1] - 2023-04-24
+
 ### Changed
 
 - Update upstream chart from version 2.37.6 to 3.13.0
@@ -86,7 +88,8 @@ datadog:
 
 - Initial release 2.0.0 which follows upstream version 2.10.13
 
-[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.5.0...HEAD
+[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.5.1...HEAD
+[2.5.1]: https://github.com/giantswarm/datadog-app/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/giantswarm/datadog-app/compare/v2.4.0...v2.5.0
 [2.4.0]: https://github.com/giantswarm/datadog-app/compare/v2.3.1...v2.4.0
 [2.3.1]: https://github.com/giantswarm/datadog-app/compare/v2.3.0...v2.3.1
