@@ -6,18 +6,6 @@ workflows:
   package-and-push-chart-on-tag:
     jobs:
       - architect/push-to-app-catalog:
-          context: "architect"
-          executor: "app-build-suite"
-          name: "package and push datadog chart to playground catalog"
-          app_catalog: "giantswarm-playground-catalog"
-          app_catalog_test: "giantswarm-playground-test-catalog"
-          chart: "datadog"
-          ct_config: ".circleci/ct-config.yaml"
-          push_to_oci_registry: true
-          filters:
-            tags:
-              only: /^v.*/
-      - architect/push-to-app-catalog:
           context: architect
           executor: "app-build-suite"
           name: "package and push datadog chart to giantswarm catalog"
