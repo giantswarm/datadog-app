@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.5.2] - 2023-04-25
+### Fixed
+
+- Fix app url in the chart.
 
 ## [2.5.2] - 2023-04-25
 
