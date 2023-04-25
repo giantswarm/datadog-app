@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.5.3] - 2023-04-25
+
 ### Fixed
 
 - Fix app url in the chart.
@@ -98,7 +100,8 @@ datadog:
 
 - Initial release 2.0.0 which follows upstream version 2.10.13
 
-[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.5.2...HEAD
+[Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.5.3...HEAD
+[2.5.3]: https://github.com/giantswarm/datadog-app/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/giantswarm/datadog-app/compare/v2.5.2...v2.5.2
 [2.5.2]: https://github.com/giantswarm/datadog-app/compare/v2.5.1...v2.5.2
 [2.5.1]: https://github.com/giantswarm/datadog-app/compare/v2.5.0...v2.5.1
