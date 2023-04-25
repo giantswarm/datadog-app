@@ -9,7 +9,7 @@ keywords:
   - monitoring
   - alerting
   - metric
-home: https://github.com/giantswarm/loki-app
+home: https://github.com/giantswarm/datadog-app
 icon: https://s.giantswarm.io/app-icons/datadog/1/light.svg
 sources:
   - https://github.com/giantswarm/datadog-app
