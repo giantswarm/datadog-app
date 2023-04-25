@@ -6,15 +6,15 @@ workflows:
   package-and-push-chart-on-tag:
     jobs:
       - architect/push-to-app-catalog:
-          context: "architect"
-          executor: "app-build-suite" # uncomment this if you want automatic metadata generation
+          context: architect
+          executor: "app-build-suite"
           name: "package and push datadog chart"
-          app_catalog: "giantswarm-playground-catalog"
-          app_catalog_test: "giantswarm-playground-test-catalog"
+          app_catalog: "giantswarm-catalog"
+          app_catalog_test: "giantswarm-test-catalog"
           chart: "datadog"
           ct_config: ".circleci/ct-config.yaml"
-          # Trigger job on git tag.
+          push_to_oci_registry: true
           filters:
             tags:
               only: /^v.*/
-          push_to_oci_registry: true
+
