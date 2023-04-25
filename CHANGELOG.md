@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.5.2] - 2023-04-25
 
+### Changed
+
+- Push `datadog-app` to Giantswarm Catalog.
+
 ## [2.5.1] - 2023-04-24
 
 ### Changed
