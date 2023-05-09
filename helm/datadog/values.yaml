@@ -7,6 +7,10 @@ datadog:
     podSecurity:
       podSecurityPolicy:
         create: true
+    
+    replicas: 2
+
+    createPodDisruptionBudget: true
 
   agents:
     podSecurity:
@@ -16,6 +20,14 @@ datadog:
         seLinuxOptions: {}
       seLinuxContext:
         seLinuxOptions: {}
+      seccompProfiles:
+      - "runtime/default"
 
       apparmor:
         enabled: false
+    
+    containers:
+      agent: 
+        securityContext:
+          seccompProfile:
+            type: RuntimeDefault

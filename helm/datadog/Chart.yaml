@@ -14,7 +14,7 @@ icon: https://s.giantswarm.io/app-icons/datadog/1/light.svg
 sources:
   - https://github.com/giantswarm/datadog-app
   - https://app.datadoghq.com/account/settings#agent/kubernetes
-  - https://github.com/DataDog/datadog-agent
+  - https://github.com/DataDog/helm-charts/tree/main/charts/datadog
 dependencies:
   - name: datadog
     version: 3.13.0
