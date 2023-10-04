@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.6.0] - 2023-10-04
 
+## [2.6.0] - 2023-10-04
+
 ### Changed
 
 - Add kyverno-policy-exceptions.
@@ -107,6 +109,7 @@ datadog:
 - Initial release 2.0.0 which follows upstream version 2.10.13
 
 [Unreleased]: https://github.com/giantswarm/datadog-app/compare/v2.6.0...HEAD
+[2.6.0]: https://github.com/giantswarm/datadog-app/compare/v2.6.0...v2.6.0
 [2.6.0]: https://github.com/giantswarm/datadog-app/compare/v2.5.3...v2.6.0
 [2.5.3]: https://github.com/giantswarm/datadog-app/compare/v2.5.2...v2.5.3
 [2.5.2]: https://github.com/giantswarm/datadog-app/compare/v2.5.2...v2.5.2
